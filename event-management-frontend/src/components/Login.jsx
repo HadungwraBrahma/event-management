@@ -7,19 +7,21 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      const response = await API.post("/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await API.post("/api/auth/login", { email, password });
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,8 +48,8 @@ function Login() {
             required
           />
         </div>
-        <button type="submit" className="submit-button">
-          Login
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>
