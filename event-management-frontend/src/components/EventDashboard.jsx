@@ -11,6 +11,8 @@ function EventDashboard() {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState({});
+  const [deletingEventId, setDeletingEventId] = useState(null);
 
   useEffect(() => {
     const socket = io("https://event-management-qx7x.onrender.com");
@@ -86,6 +88,10 @@ function EventDashboard() {
   };
 
   const handleConfirmDelete = async () => {
+    if (!eventToDelete) return;
+
+    setDeletingEventId(eventToDelete._id);
+
     try {
       await API.delete(`/api/events/${eventToDelete._id}`);
 
@@ -97,6 +103,8 @@ function EventDashboard() {
     } catch (error) {
       console.error("Error deleting event:", error);
       alert(error.response?.data?.message || "Error deleting event");
+    } finally {
+      setDeletingEventId(null);
     }
   };
 
@@ -117,8 +125,12 @@ function EventDashboard() {
           >
             Cancel
           </button>
-          <button className="modal-button delete" onClick={handleConfirmDelete}>
-            Delete
+          <button
+            className="modal-button delete"
+            onClick={handleConfirmDelete}
+            disabled={deletingEventId === eventToDelete?._id}
+          >
+            {deletingEventId === eventToDelete?._id ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>
@@ -126,6 +138,11 @@ function EventDashboard() {
   );
 
   const handleAttendance = async (eventId) => {
+    setAttendanceLoading((prev) => ({
+      ...prev,
+      [eventId]: true,
+    }));
+
     try {
       const response = await API.post(`/api/events/${eventId}/attendance`, {});
 
@@ -135,6 +152,11 @@ function EventDashboard() {
       }));
     } catch (error) {
       console.error("Error toggling attendance:", error);
+    } finally {
+      setAttendanceLoading((prev) => ({
+        ...prev,
+        [eventId]: false,
+      }));
     }
   };
 
@@ -167,6 +189,11 @@ function EventDashboard() {
         <div className="events-grid">
           {filteredEvents.map((event) => (
             <div key={event._id} className="event-card">
+              {event.imageUrl && (
+                <div className="event-image">
+                  <img src={event.imageUrl} alt={event.title} />
+                </div>
+              )}
               <h3>{event.title}</h3>
               <p className="event-description">{event.description}</p>
               <div className="event-details">
@@ -184,8 +211,11 @@ function EventDashboard() {
                         ? "attending"
                         : ""
                     }`}
+                    disabled={attendanceLoading[event._id]}
                   >
-                    {attendanceStatus[event._id]?.isAttending
+                    {attendanceLoading[event._id]
+                      ? "Updating..."
+                      : attendanceStatus[event._id]?.isAttending
                       ? "Not Attending"
                       : "Attending"}
                   </button>

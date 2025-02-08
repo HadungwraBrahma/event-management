@@ -14,6 +14,7 @@ function CreateEvent() {
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [creatingEvent, setCreatingEvent] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -31,16 +32,15 @@ function CreateEvent() {
     };
     reader.readAsDataURL(file);
 
-    // Upload to Cloudinary
     try {
       setUploadingImage(true);
       const base64 = await convertToBase64(file);
       const response = await API.post("/api/upload", { data: base64 });
       setEventData({ ...eventData, imageUrl: response.data.url });
-      setUploadingImage(false);
     } catch (err) {
       console.error("Error uploading image:", err);
       setError("Failed to upload image");
+    } finally {
       setUploadingImage(false);
     }
   };
@@ -56,11 +56,15 @@ function CreateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCreatingEvent(true);
+
     try {
       await API.post("/api/events", eventData);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create event");
+    } finally {
+      setCreatingEvent(false);
     }
   };
 
@@ -153,9 +157,9 @@ function CreateEvent() {
         <button
           type="submit"
           className="submit-button"
-          disabled={uploadingImage}
+          disabled={uploadingImage || creatingEvent}
         >
-          Create Event
+          {creatingEvent ? "Creating Event..." : "Create Event"}
         </button>
       </form>
     </div>
