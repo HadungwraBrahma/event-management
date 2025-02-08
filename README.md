@@ -156,7 +156,7 @@ Password: test123
 
 Hadungwra Brahma - [hadungwrabrahma2@gmail.com]
 
-Project Link: [https://github.com/yourusername/event-management](https://github.com/yourusername/event-management)
+Project Link: [https://github.com/HadungwraBrahma/event-management](https://github.com/HadungwraBrahma/event-management)
 
 ## License
 
