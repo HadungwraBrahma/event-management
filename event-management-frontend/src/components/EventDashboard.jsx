@@ -13,7 +13,7 @@ function EventDashboard() {
   const [eventToDelete, setEventToDelete] = useState(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io("https://event-management-qx7x.onrender.com");
 
     const fetchCurrentUser = async () => {
       try {

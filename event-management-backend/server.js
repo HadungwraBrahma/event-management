@@ -17,7 +17,16 @@ const io = new Server(server, {
 
 connectDB();
 
-app.use(cors());
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.set("io", io);
