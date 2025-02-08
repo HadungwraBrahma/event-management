@@ -1,21 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../config/axiosConfig";
+import TestLoginButton from "./TestLoginButton";
 import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const response = await API.post("/api/auth/login", { email, password });
+      const response = await API.post("/api/auth/login", {
+        email,
+        password,
+      });
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (err) {
@@ -24,7 +27,7 @@ function Login() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
@@ -52,6 +55,7 @@ function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+    <TestLoginButton />
     </div>
   );
 }

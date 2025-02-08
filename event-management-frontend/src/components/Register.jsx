@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TestLoginButton from "./TestLoginButton";
 import "./Register.css";
 
 function Register() {
@@ -11,7 +12,6 @@ function Register() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,8 +25,6 @@ function Register() {
       return;
     }
 
-    setLoading(true);
-
     try {
       const response = await axios.post("/api/auth/register", {
         username: formData.username,
@@ -37,8 +35,6 @@ function Register() {
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -87,10 +83,11 @@ function Register() {
             required
           />
         </div>
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
+        <button type="submit" className="submit-button">
+          Register
         </button>
       </form>
+      <TestLoginButton />
     </div>
   );
 }

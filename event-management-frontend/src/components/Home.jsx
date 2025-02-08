@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import TestLoginButton from "./TestLoginButton";
 import "./Home.css";
 
 function Home() {
@@ -26,6 +27,9 @@ function Home() {
           )}
         </div>
       </div>
+
+      <TestLoginButton />
+
       <div className="features-section">
         <h2>Features</h2>
         <div className="features-grid">
