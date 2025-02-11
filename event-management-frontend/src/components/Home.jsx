@@ -28,7 +28,7 @@ function Home() {
         </div>
       </div>
 
-      <TestLoginButton />
+      {!isLoggedIn && <TestLoginButton />}
 
       <div className="features-section">
         <h2>Features</h2>
